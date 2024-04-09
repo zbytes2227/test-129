@@ -9,26 +9,26 @@ const handler = async (req, res) => {
       const allAttendance = await Attendance.find();
 
       // Create an array to store details of each attendance record
-      const attendanceDetails = [];
+      // const attendanceDetails = [];
 
       // Loop through each attendance record
-      for (const attendanceRecord of allAttendance) {
-        // Assuming cardID is a property in the attendance record
-        const cardID = attendanceRecord.cardID;
+      // for (const attendanceRecord of allAttendance) {
+      //   // Assuming cardID is a property in the attendance record
+      //   const cardID = attendanceRecord.cardID;
 
-        // Use the Cards model to find details based on cardID
-        const cardDetails = await Cards.findOne({ cardID });
+      //   // Use the Cards model to find details based on cardID
+      //   const cardDetails = await Cards.findOne({ cardID });
 
-        // Add the attendance record and card details to the array
-        attendanceDetails.push({
-          cardID: cardDetails.cardID,
-          name: cardDetails.name,
-          class: cardDetails.class,
-          contact: cardDetails.contact,
-          login: attendanceRecord.Login,
-          logout: attendanceRecord.Logout,
-        });
-      }
+      //   // Add the attendance record and card details to the array
+      //   attendanceDetails.push({
+      //     cardID: cardDetails.cardID,
+      //     name: cardDetails.name,
+      //     class: cardDetails.class,
+      //     contact: cardDetails.contact,
+      //     login: attendanceRecord.Login,
+      //     logout: attendanceRecord.Logout,
+      //   });
+      // }
 
       // Send the array of attendance details to the client
       return res.json({ success: true, allAttendanceLogs :  allAttendance});
