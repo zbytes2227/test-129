@@ -29,30 +29,9 @@ const handler = async (req, res) => {
       // Check if the card is found
       if (!reqCard) {
         return res.status(200).json({ success: false, msg: "UnAuthorised Card", status: 109 });
-      }
+      
 
-
-        // Check if the card has already logged in on the same day
-  const existingAttendance = await Attendance.findOne({
-    cardID: req.body.cardID,
-    Login: { $gte: new Date().setHours(0, 0, 0, 0), $lt: new Date().setHours(23, 59, 59, 999) },
-  });
-
-  if (existingAttendance) {
-    // Card has already logged in on the same day, update Logout time
-    existingAttendance.Logout = new Date();
-    try {
-      const updatedAttendance = await existingAttendance.save();
-      const formattedLogoutTime = formatDate(existingAttendance.Logout);
-
-      // Handle success, send response, etc.
-      return res.status(200).json({ success: true, msg: ("Logout : "+formattedLogoutTime), data: reqCard });
-    } catch (error) {
-      // Handle error, send appropriate response
-      console.error("Error updating attendance:", error);
-      return res.status(500).json({ success: false, msg: "Internal Server Error" });
-    }
-  } else {
+  
     // Card is logging in for the first time on the same day, create new attendance record
     const newAttendance = new Attendance({
       cardID: req.body.cardID,
@@ -72,7 +51,7 @@ const handler = async (req, res) => {
       console.error("Error saving attendance:", error);
       return res.status(500).json({ success: false, msg: "Internal Server Error" });
     }
-  }
+  
 
       // return res.json({ success: true, card_details: reqCard, status: 105 });
     } catch (err) {
