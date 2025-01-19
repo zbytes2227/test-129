@@ -2,62 +2,28 @@ import Cards from "@/model/Cards";
 import connectDb from "../../middleware/mongoose";
 import Attendance from "@/model/Attendance";
 
-const formatDate = (date) => {
-  return date.toLocaleString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: false,
-    timeZone: 'Asia/Kolkata', // Set the time zone to India Standard Time
-  });
-};
 const handler = async (req, res) => {
   if (req.method === "POST") {
     try {
-      // Get the 'id' parameter from the request query
-   
+      // Simply add attendance without any checks
+      const newAttendance = new Attendance({
+        cardID: req.body.cardID,
+        Login: new Date(),
+      });
 
-      // Check if id is provided
-      if (!req.body.cardID) {
-        return res.status(400).json({ success: false, msg: "Missing 'id' parameter" });
-      }
-
-      // Find the card details by cardID
-      const reqCard = await Cards.findOne({ cardID: req.body.cardID });
-
-      // Check if the card is found
-      if (!reqCard) {
-        return res.status(200).json({ success: false, msg: "UnAuthorised Card", status: 109 });
-      
-
-  
-    // Card is logging in for the first time on the same day, create new attendance record
-    const newAttendance = new Attendance({
-      cardID: req.body.cardID,
-      Login: new Date(),
-      // Logout: You can set Logout if needed, depending on your logic
-    });
-
-    // Save the new attendance record to the database
-    try {
+      // Save the new attendance record to the database
       const savedAttendance = await newAttendance.save();
-      // Handle success, send response, etc.
-      const formattedLoginTime = formatDate(newAttendance.Login);
 
-      return res.status(200).json({ success: true, msg: ("Login : "+formattedLoginTime), data: reqCard });
+      return res.status(200).json({
+        success: true,
+        msg: "Attendance added successfully",
+      });
     } catch (error) {
-      // Handle error, send appropriate response
       console.error("Error saving attendance:", error);
       return res.status(500).json({ success: false, msg: "Internal Server Error" });
     }
-  
-
-      // return res.json({ success: true, card_details: reqCard, status: 105 });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ success: false, msg: "Server error...." });
-    }
+  } else {
+    res.status(405).json({ success: false, msg: "Method not allowed" });
   }
 };
 
